@@ -212,9 +212,9 @@ void loop() {
       servo4_closed = !servo4_closed;
     }
 
-    if (myRemote->Button1 && !btt1_pressed){
+    if (myRemote->Button1){
       updateMotorSpeed(&moteurClamp, 200, clamp_driver);
-    } else if (myRemote->Button2 && !btt2_pressed){
+    } else if (myRemote->Button2){
       updateMotorSpeed(&moteurClamp, -200, clamp_driver);
     } else {
       updateMotorSpeed(&moteurClamp, 0.0, clamp_driver);
