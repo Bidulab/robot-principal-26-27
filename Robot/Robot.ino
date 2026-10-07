@@ -273,18 +273,16 @@ void updateMotorSpeed(float* current, float target, TMC2209& stepper) {
 
 void config_2209(TMC2209& stepper_driver){
   delay(10);
-  //stepper_driver.setRMSCurrent(1000, R_SENSE);
+
   stepper_driver.setRunCurrent(100);
   delay(10);
-  //stepper_driver.useInternalSenseResistors();
+
   stepper_driver.useExternalSenseResistors();
-  //stepper_driver.enableAutomaticCurrentScaling();
+
   stepper_driver.enableCoolStep();
   stepper_driver.setMicrostepsPerStepPowerOfTwo(6);
   delay(10);
-  //stepper_driver.enableStealthChop();¸
-  //stepper_driver.disableStealthChop();
-  //stepper_driver.setStandstillMode(1); //Freewheel
+
   delay(10);
   stepper_driver.enable();
 }
