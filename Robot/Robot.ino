@@ -33,6 +33,7 @@ MyStepper stepper_1;
 MyStepper stepper_2;
 MyStepper stepper_3;
 MyStepper stepper_4;
+TMC2209 clamp_driver;
 
 Servo servo1;
 Servo servo2;
@@ -40,11 +41,12 @@ Servo servo3;
 Servo servo4;
 
 Remote* myRemote;
+HardwareSerial & clamp_driver_sstream = CLAMP_DRIVER_SERIAL;
 
 float speed, spin;
 const float rotation = .8;
 double angle;
-float moteurClamp = 0.0;
+//float moteurClamp = 0.0; // cette variable était inutilisé ?
 
 bool btt1_pressed = false;
 bool btt2_pressed = false;
@@ -57,6 +59,12 @@ bool servo1_closed = false;
 bool servo2_closed = false;
 bool servo3_closed = false;
 bool servo4_closed = false;
+
+// Vis sans fin
+float moteurClamp = 0.0;
+
+void config_2209(TMC2209& stepper_driver);
+void updateMotorSpeed(float* current, float target, TMC2209& stepper);
 
 void stepper_it() {
   stepper_1.loop();
@@ -95,6 +103,9 @@ void setup() {
   stepper_3.spin(0.0);
   stepper_4.spin(0.0);
 
+  clamp_driver.setup(clamp_driver_sstream, 115200, TMC2209::SERIAL_ADDRESS_0);
+  config_2209(clamp_driver);
+
   ouvrir_pinces();
 
   // Give time to the remote to start
@@ -105,7 +116,7 @@ void setup() {
 }
 
 void loop() {
-  
+
 
   if (myRemote->updateValues()) {
 
@@ -162,26 +173,26 @@ void loop() {
     stepper_3.spin(moteur3_target * 8.0);
     stepper_4.spin(moteur4_target * 8.0);
 
-    if (myRemote->Button2 && !btt2_pressed) {  //Rising edge
+    /*if (myRemote->Button2 && !btt2_pressed) {  //Rising edge
       if (servo1_closed) {
         // utilisation selon le nouveau réglement
       }
-        
+
       else {
           // utilisation selon le nouveau réglement
         }
       servo1_closed = !servo1_closed;
-    }
-    if (myRemote->Button1 && !btt1_pressed) {  //Rising edge
+    }*/
+    /*if (myRemote->Button1 && !btt1_pressed) {  //Rising edge
       if (servo2_closed) {
           // utilisation selon le nouveau réglement
         }
       else{
           // utilisation selon le nouveau réglement
       }
-      
+
       servo2_closed = !servo2_closed;
-    }
+    }*/
     if (myRemote->Button4 && !btt4_pressed) {  //Rising edge
       if (servo3_closed) {
                   // utilisation selon le nouveau réglement
@@ -200,10 +211,21 @@ void loop() {
       }
       servo4_closed = !servo4_closed;
     }
+
+    if (myRemote->Button1 && !btt1_pressed){
+      updateMotorSpeed(&moteurClamp, 200, clamp_driver);
+    } else if (myRemote->Button2 && !btt2_pressed){
+      updateMotorSpeed(&moteurClamp, -200, clamp_driver);
+    } else {
+      updateMotorSpeed(&moteurClamp, 0.0, clamp_driver);
+    }
+
     btt1_pressed = myRemote->Button1;
     btt2_pressed = myRemote->Button2;
     btt3_pressed = myRemote->Button3;
     btt4_pressed = myRemote->Button4;
+
+
 
     if (myRemote->Encoder_SW && !encoder_sw_pressed) {  //Rising edge
       ouvrir_pinces();
@@ -232,4 +254,37 @@ void fermer_pinces() {
   servo2_closed = true;
   servo3_closed = true;
   servo4_closed = true;
+}
+
+
+void updateMotorSpeed(float* current, float target, TMC2209& stepper) {
+  const float acceleration = 15.0;
+  if (target == 0.0){
+    *current = 0.0;
+  } else if (*current < target) {
+    *current += acceleration;
+    if (*current > target) *current = target; // Avoid overshoot
+  } else if (*current > target) {
+    *current -= acceleration;
+    if (*current < target) *current = target; // Avoid undershoot
+  }
+  stepper.moveAtVelocity((int32_t)((*current) * 160));
+}
+
+void config_2209(TMC2209& stepper_driver){
+  delay(10);
+  //stepper_driver.setRMSCurrent(1000, R_SENSE);
+  stepper_driver.setRunCurrent(100);
+  delay(10);
+  //stepper_driver.useInternalSenseResistors();
+  stepper_driver.useExternalSenseResistors();
+  //stepper_driver.enableAutomaticCurrentScaling();
+  stepper_driver.enableCoolStep();
+  stepper_driver.setMicrostepsPerStepPowerOfTwo(6);
+  delay(10);
+  //stepper_driver.enableStealthChop();¸
+  //stepper_driver.disableStealthChop();
+  //stepper_driver.setStandstillMode(1); //Freewheel
+  delay(10);
+  stepper_driver.enable();
 }
