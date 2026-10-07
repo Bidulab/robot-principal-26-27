@@ -46,7 +46,6 @@ HardwareSerial & clamp_driver_sstream = CLAMP_DRIVER_SERIAL;
 float speed, spin;
 const float rotation = .8;
 double angle;
-//float moteurClamp = 0.0; // cette variable était inutilisé ?
 
 bool btt1_pressed = false;
 bool btt2_pressed = false;
@@ -173,26 +172,6 @@ void loop() {
     stepper_3.spin(moteur3_target * 8.0);
     stepper_4.spin(moteur4_target * 8.0);
 
-    /*if (myRemote->Button2 && !btt2_pressed) {  //Rising edge
-      if (servo1_closed) {
-        // utilisation selon le nouveau réglement
-      }
-
-      else {
-          // utilisation selon le nouveau réglement
-        }
-      servo1_closed = !servo1_closed;
-    }*/
-    /*if (myRemote->Button1 && !btt1_pressed) {  //Rising edge
-      if (servo2_closed) {
-          // utilisation selon le nouveau réglement
-        }
-      else{
-          // utilisation selon le nouveau réglement
-      }
-
-      servo2_closed = !servo2_closed;
-    }*/
     if (myRemote->Button4 && !btt4_pressed) {  //Rising edge
       if (servo3_closed) {
                   // utilisation selon le nouveau réglement
