@@ -29,6 +29,8 @@
 #define CLAMP_DRIVER_STEP_PIN 13
 #define CLAMP_DRIVER_DIR_PIN 12
 
+#define VITESSE_MAX_VIS 10.0
+
 MyStepper stepper_1;
 MyStepper stepper_2;
 MyStepper stepper_3;
@@ -248,8 +250,8 @@ void updateMotorSpeed(float* current, float target, TMC2209& stepper) {
     if (*current < target) *current = target; // Avoid undershoot
   }
   stepper.moveAtVelocity((int32_t)((*current) * 160));
-  if (*current > 10.0) {
-    *current = 10.0;
+  if (*current > VITESSE_MAX_VIS) {
+    *current = VITESSE_MAX_VIS;
   }
 }
 
