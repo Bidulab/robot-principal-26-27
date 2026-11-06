@@ -248,6 +248,9 @@ void updateMotorSpeed(float* current, float target, TMC2209& stepper) {
     if (*current < target) *current = target; // Avoid undershoot
   }
   stepper.moveAtVelocity((int32_t)((*current) * 160));
+  if (*current > 10.0) {
+    *current = 10.0;
+  }
 }
 
 void config_2209(TMC2209& stepper_driver){
