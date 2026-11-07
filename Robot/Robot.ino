@@ -194,9 +194,9 @@ void loop() {
     }
 
     if (myRemote->Button1){
-      updateMotorSpeed(&moteurClamp, 200, clamp_driver);
+      updateMotorSpeed(&moteurClamp, VITESSE_MAX_VIS, clamp_driver);
     } else if (myRemote->Button2){
-      updateMotorSpeed(&moteurClamp, -200, clamp_driver);
+      updateMotorSpeed(&moteurClamp, -VITESSE_MAX_VIS, clamp_driver);
     } else {
       updateMotorSpeed(&moteurClamp, 0.0, clamp_driver);
     }
@@ -250,9 +250,6 @@ void updateMotorSpeed(float* current, float target, TMC2209& stepper) {
     if (*current < target) *current = target; // Avoid undershoot
   }
   stepper.moveAtVelocity((int32_t)((*current) * 160));
-  if (*current > VITESSE_MAX_VIS) {
-    *current = VITESSE_MAX_VIS;
-  }
 }
 
 void config_2209(TMC2209& stepper_driver){
