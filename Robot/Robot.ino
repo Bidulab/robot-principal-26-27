@@ -29,7 +29,7 @@
 #define CLAMP_DRIVER_STEP_PIN 13
 #define CLAMP_DRIVER_DIR_PIN 12
 
-#define VITESSE_MAX_VIS 150.0 //150.0 // 140
+#define VITESSE_MAX_VIS 50.0 //150.0 // 140
 
 MyStepper stepper_1;
 MyStepper stepper_2;
@@ -261,7 +261,7 @@ void config_2209(TMC2209& stepper_driver){
   stepper_driver.useExternalSenseResistors();
 
   stepper_driver.enableCoolStep();
-  stepper_driver.setMicrostepsPerStepPowerOfTwo(6);
+  stepper_driver.setMicrostepsPerStepPowerOfTwo(4);
   delay(10);
 
   delay(10);
