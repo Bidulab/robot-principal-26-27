@@ -29,7 +29,7 @@
 #define CLAMP_DRIVER_STEP_PIN 13
 #define CLAMP_DRIVER_DIR_PIN 12
 
-#define VITESSE_MAX_VIS 10.0
+#define VITESSE_MAX_VIS 150.0 //150.0 // 140
 
 MyStepper stepper_1;
 MyStepper stepper_2;
